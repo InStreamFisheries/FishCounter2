@@ -1,0 +1,22 @@
+Package: FishCounter2
+Type: Package
+Title: Summarizes and explored fish counter data
+Version: 2.0.0
+Authors@R: c(
+    person("Doug", "Braun", role = c("aut")),
+    person("Annika", "Putt", email = "annik@instream.net", role = c("cre", "ctb")))
+Maintainer: The package maintainer <annika@instream.net>
+Description: The FishCounter2 package is a set of tools that combine, summarize and explore fish counter data from the Logie resistivity counter.     It simplifies common tasks such as combining data from multiple downloads, exploring plots of peak signal sizes, and summarizes the number of     events, ups and down counts graphically.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.4.3)
+Imports:
+    plyr,
+    dplyr,
+    lubridate,
+    ggplot2,
+    scales,
+    grid,
+    tidyr
+RoxygenNote: 6.1.1
