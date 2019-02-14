@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_pss_hour.R
 \name{plot_pss_hour}
 \alias{plot_pss_hour}
-\title{A function that plots the peak pss size (PSS) by hour of Logie counter data}
+\title{A function that plots the peak signal size (PSS) by hour of Logie counter data}
 \usage{
 plot_pss_hour(dataset, description, first_day = NULL, last_day = NULL,
   min_pss = NULL, max_pss = NULL, ch = NULL, print_to_file = FALSE)

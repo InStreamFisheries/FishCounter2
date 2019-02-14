@@ -1,4 +1,4 @@
-#' A function that plots the peak signal size by date and time per hour of Logie counter data
+#' A function that plots the peak signal size (PSS) by date and time per hour of Logie counter data
 #'
 #' This function plots the PSS by day and time for Logie counter data
 #' @param dataset The dataset used to create the plots.

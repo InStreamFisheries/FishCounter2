@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_pss_date.R
 \name{plot_pss_date}
 \alias{plot_pss_date}
-\title{A function that plots the peak signal size by date and time per hour of Logie counter data}
+\title{A function that plots the peak signal size (PSS) by date and time per hour of Logie counter data}
 \usage{
 plot_pss_date(dataset, description, first_day = NULL, last_day = NULL,
   min_pss = NULL, max_pss = NULL, ch = NULL, print_to_file = FALSE)

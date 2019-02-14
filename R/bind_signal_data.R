@@ -5,8 +5,8 @@
 #' @param site Name of the study river.
 #' @param year Year of counter operation.
 #' @param max_pss The maximum pss size.
-#' @param rows_rm Determines whether or not the rows removed from the data are returned Defaults to FALSE.
-#' @return A master data file of processed Logie pss data. The data are written to file as well as stored in the environment. All individual signal data files are combined into one master graphics file and written to the folder path as "all_signal_data.csv".
+#' @param rows_rm Determines whether the rows removed from the data are returned as a .csv file in the working directory. Defaults to FALSE.
+#' @return A master data file of processed Logie signal data. The data are written to file as well as stored in the environment. All individual signal data files are combined into one master graphics file and written to the folder path as "all_signal_data.csv".
 
 
 bind_signal_data <- function(path_to_folder, site, year, max_pss, rows_rm = FALSE){

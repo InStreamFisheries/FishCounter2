@@ -23,8 +23,8 @@ hist_records(dataset, description, first_day = NULL, last_day = NULL,
 \item{print_to_file}{If TRUE, plot is saved to the working directory (defaults to FALSE).}
 }
 \value{
-Generates a histograms of peak pss size for either up counts, down counts, or events for each counter channel. Also prints a summary of the total number of events per channel for the specified description.
+Generates a histogram of peak signal size for either up counts, down counts, or events for each counter channel. Also prints a summary of the total number of events per channel for the specified description.
 }
 \description{
-This function plots historgrams of up, down and event counts for Logie counter data by channel as specified by the user.
+This function plots historgrams of up, down, and event counts for Logie counter data by channel as specified by the user.
 }

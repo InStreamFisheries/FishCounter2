@@ -21,7 +21,7 @@ plot_events(dataset, first_day = NULL, last_day = NULL,
 \item{print_to_file}{If TRUE, plot is saved to the working directory (defaults to FALSE).}
 }
 \value{
-Generates three histograms of peak signal size for up counts, down counts and events for each counter channel.
+Generates a plot displaying the hourly count of ups and events for Logie counter data.
 }
 \description{
 This function plots the number of events per hour, channel, and day.

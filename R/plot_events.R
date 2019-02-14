@@ -7,7 +7,7 @@
 #' @param min_pss The lower threshold PSS value to be plotted. Defaults to 0.
 #' @param max_pss The upper threshold PSS value to be plotted. Defaults to 130.
 #' @param print_to_file If TRUE, plot is saved to the working directory (defaults to FALSE).
-#' @return Generates three histograms of peak signal size for up counts, down counts and events for each counter channel.
+#' @return Generates a plot displaying the hourly count of ups and events for Logie counter data.
 
 plot_events <- function(dataset, first_day = NULL, last_day = NULL, min_pss = NULL, max_pss = NULL, print_to_file = FALSE) {
 
