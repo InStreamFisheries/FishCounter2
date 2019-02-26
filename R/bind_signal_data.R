@@ -1,28 +1,26 @@
-#' A function that combines individual Logie graphics data files.
+#' A function that combines and processes raw Logie graphics data files.
 #'
-#' A function to combine and process Logie graphics data.
-#' @param path_to_folder The file path for the folder that contains all data files for processing.
-#' @param site Name of the study river.
-#' @param year Year of counter operation.
-#' @param max_pss The maximum pss size.
-#' @param rows_rm Determines whether the rows removed from the data are returned as a .csv file in the working directory. Defaults to FALSE.
-#' @return A master data file of processed Logie signal data. The data are written to file as well as stored in the environment. All individual signal data files are combined into one master graphics file and written to the folder path as "all_signal_data.csv".
+#' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors 
+#' and duplicates are removed.
+#' @param path_to_folder The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.
+#' @param site Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).
+#' @param year Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).
+#' @param max_pss The maximum peak signal size (pss).
+#' @param print_removed Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are 
+#' printed to the path_to_folder as a .csv file.
+#' @return A list containing two elements: signal_data (cleaned master data file), and 
+#' wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written 
+#' to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. 
+#' An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in 
+#' the data files into one master graphics file.
 
 
-bind_signal_data <- function(path_to_folder, site, year, max_pss, rows_rm = FALSE){
+bind_signal_data <- function(path_to_folder, site, year, max_pss, print_removed = FALSE) {
 
   #"\\.txt$" tells r that the files are text files.
   signal_paths <- dir(path_to_folder, pattern = "\\.txt$", full.names = TRUE)
 
   names(signal_paths) <- basename(signal_paths)
-
-  if(missing(site)) {
-    site <- ""
-  }
-
-  if(missing(year)) {
-    year <- ""
-  }
 
   signal_data1 <- plyr::ldply(signal_paths,
                         read.table,
@@ -71,7 +69,7 @@ bind_signal_data <- function(path_to_folder, site, year, max_pss, rows_rm = FALS
                          sep = ""),
             row.names = FALSE)
 
-  if(rows_rm == "TRUE") {
+  if(print_removed == "TRUE") {
 
     write.csv(x = row_rm5[, -2],
               file = paste(path_to_folder,

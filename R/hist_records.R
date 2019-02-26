@@ -1,15 +1,15 @@
-#' A function that plots histograms of Logie counter data for the specified description
+#' A function that generates histograms of Logie counter data
 #'
-#' This function plots historgrams of up, down, and event counts for Logie counter data by channel as specified by the user.
-#' @param dataset The dataset used to create the histograms.
-#' @param description The type of counter event to be plotted. Must be "U", "D", or "E".
-#' @param first_day The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset
-#' @param last_day The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.
-#' @param min_pss The lower threshold PSS value to be plotted. Defaults to 0.
-#' @param max_pss The upper threshold PSS value to be plotted. Defaults to 130.
-#' @param print_to_file If TRUE, plot is saved to the working directory (defaults to FALSE).
-#' @return Generates a histogram of peak signal size for either up counts, down counts, or events for each counter channel. Also prints a summary of the total number of events per channel for the specified description.
-#' @export
+#' This function generates historgrams of ups, downs, or events separated by channel for Logie counter data. 
+#' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
+#' @param description The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.
+#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.
+#' @param min_pss The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.
+#' @param max_pss The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.
+#' @param print_to_file If TRUE, the histogram is saved to the working directory. Defaults to FALSE.
+#' @return Generates a histogram of peak signal size for either up counts, down counts, or events for each counter channel. 
+#' Also prints to the console a summary of the total number of events per channel for the specified description.
 
 hist_records <- function(dataset, description, first_day = NULL, last_day = NULL, min_pss = NULL, max_pss = NULL, print_to_file = FALSE) {
 
@@ -81,7 +81,7 @@ hist_records <- function(dataset, description, first_day = NULL, last_day = NULL
           panel.grid.minor = element_blank(),
           strip.background = element_blank(),
           panel.background = element_blank()) +
-    ylab(sprintf("Frequency of %s counts", description_lab)) + xlab("pss size")
+    ylab(sprintf("Frequency of %s counts", description_lab)) + xlab("peak signal size (pss)")
 
   print(hist_plot)
 

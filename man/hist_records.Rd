@@ -2,29 +2,30 @@
 % Please edit documentation in R/hist_records.R
 \name{hist_records}
 \alias{hist_records}
-\title{A function that plots histograms of Logie counter data for the specified description}
+\title{A function that generates histograms of Logie counter data}
 \usage{
 hist_records(dataset, description, first_day = NULL, last_day = NULL,
   min_pss = NULL, max_pss = NULL, print_to_file = FALSE)
 }
 \arguments{
-\item{dataset}{The dataset used to create the histograms.}
+\item{dataset}{The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).}
 
-\item{description}{The type of counter event to be plotted. Must be "U", "D", or "E".}
+\item{description}{The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).}
 
-\item{first_day}{The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset}
+\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.}
 
-\item{last_day}{The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.}
+\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.}
 
-\item{min_pss}{The lower threshold PSS value to be plotted. Defaults to 0.}
+\item{min_pss}{The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.}
 
-\item{max_pss}{The upper threshold PSS value to be plotted. Defaults to 130.}
+\item{max_pss}{The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.}
 
-\item{print_to_file}{If TRUE, plot is saved to the working directory (defaults to FALSE).}
+\item{print_to_file}{If TRUE, the histogram is saved to the working directory. Defaults to FALSE.}
 }
 \value{
-Generates a histogram of peak signal size for either up counts, down counts, or events for each counter channel. Also prints a summary of the total number of events per channel for the specified description.
+Generates a histogram of peak signal size for either up counts, down counts, or events for each counter channel. 
+Also prints to the console a summary of the total number of events per channel for the specified description.
 }
 \description{
-This function plots historgrams of up, down, and event counts for Logie counter data by channel as specified by the user.
+This function generates historgrams of ups, downs, or events separated by channel for Logie counter data.
 }

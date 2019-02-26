@@ -2,27 +2,35 @@
 % Please edit documentation in R/bind_counter_data.R
 \name{bind_counter_data}
 \alias{bind_counter_data}
-\title{A function that combines individual Logie counter data files.}
+\title{A function that combines and processes raw Logie counter data files.}
 \usage{
 bind_counter_data(path_to_folder, no_channels, site, year, max_pss,
-  rows_rm = FALSE)
+  print_removed = FALSE)
 }
 \arguments{
-\item{path_to_folder}{The file path for the folder that contains all data files for processing.}
+\item{path_to_folder}{The file path to the folder that contains raw Logie counter data files (.txt) to be processed.}
 
-\item{no_channels}{The number of counter channels that were operated.}
+\item{no_channels}{The number of counter channels that were operated. Data with channel numbers greater than no_channels 
+are assumed to be false data and are removed from the final data frame.}
 
-\item{site}{Name of the study river.}
+\item{site}{Name of the study river. The site name appears as a column in the resulting data frames and in the file name 
+of output .csv files (i.e., siteyear.csv).}
 
-\item{year}{Year of counter operation.}
+\item{year}{Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).}
 
-\item{max_pss}{The maximum pss size.}
+\item{max_pss}{The maximum peak signal size (pss).}
 
-\item{rows_rm}{Determines whether or not the rows removed from the data are returned Defaults to FALSE.}
+\item{print_removed}{Defaults to FALSE. If TRUE, error data that were removed from the final data frame are printed to the path_to_folder as .csv files.}
 }
 \value{
-A master data file of processed Logie counter data. The data are written to file as well as stored in the environment.
+A list containing four elements: counter_data (cleaned master data file), 
+wrong_pss (data containing errors in pss that were removed from counter_data), wrong_channel 
+(data containing errors in channel that were removed from counter_data), and wrong_description 
+(data containing errors in description that were removed from counter data). Counter_data is written 
+to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss, wrong_channel, and wrong_description 
+.csv files are also created.
 }
 \description{
-A function to combine and process Logie counter data.
+A function to combine and process raw Logie counter data. Raw Logie counter files are combined and errors and duplicates are 
+removed.
 }

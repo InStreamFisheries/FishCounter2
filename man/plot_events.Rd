@@ -8,21 +8,21 @@ plot_events(dataset, first_day = NULL, last_day = NULL,
   min_pss = NULL, max_pss = NULL, print_to_file = FALSE)
 }
 \arguments{
-\item{dataset}{The dataset used to create the plots.}
+\item{dataset}{The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).}
 
-\item{first_day}{The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset}
+\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.}
 
-\item{last_day}{The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.}
+\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.}
 
-\item{min_pss}{The lower threshold PSS value to be plotted. Defaults to 0.}
+\item{min_pss}{The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.}
 
-\item{max_pss}{The upper threshold PSS value to be plotted. Defaults to 130.}
+\item{max_pss}{The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.}
 
-\item{print_to_file}{If TRUE, plot is saved to the working directory (defaults to FALSE).}
+\item{print_to_file}{If TRUE, the plot is saved to the working directory. Defaults to FALSE.}
 }
 \value{
-Generates a plot displaying the hourly count of ups and events for Logie counter data.
+Generates a time series plot of hourly events and up counts separated by channel for Logie counter data.
 }
 \description{
-This function plots the number of events per hour, channel, and day.
+This function plots a time series of hourly events and up counts separated by channel for Logie counter data.
 }

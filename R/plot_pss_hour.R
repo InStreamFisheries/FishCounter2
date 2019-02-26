@@ -1,20 +1,21 @@
-#' A function that plots the peak signal size (PSS) by hour of Logie counter data
+#' A function that plots average hourly peak signal size (pss) for Logie counter data
 #'
-#' This function plots the PSS by hour for Logie counter data
-#' @param dataset The dataset used to create the plots.
-#' @param description The type of counter event to be plotted. Must be "U", "D", or "E".
-#' @param first_day The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset
-#' @param last_day The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.
-#' @param min_pss The lower threshold PSS value to be plotted. Defaults to 0.
-#' @param max_pss The upper threshold PSS value to be plotted. Defaults to 130.
-#' @param ch The channel to be plotted. Defaults to all channels. Needs to be inputed as an object or vector (e.g. 1, or c(1, 2))
-#' @param print_to_file If TRUE, plot is saved to the working directory (defaults to FALSE).
-#' @return Generates a plot of total up counts per hour and peak pss size by hour.
-#' @export
+#' This function plots the average hourly peak signal size (pss) for Logie counter data.
+#' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
+#' @param description The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.
+#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.
+#' @param min_pss The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.
+#' @param max_pss The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.
+#' @param ch The channel to be plotted. Defaults to all channels. Needs to be inputed as an object or vector (e.g. 1, or c(1, 2)).
+#' @param print_to_file If TRUE, plot is saved to the working directory. Defaults to FALSE.
+#' @return Generates two plots of average hourly pss data. One plot displays a time series of average hourly pss for all channels combined (as specified by ch). 
+#' A second plot displayes a time series of average hourly pss separated into each channel specified by ch.
 
 plot_pss_hour <- function(dataset, description, first_day = NULL, last_day  = NULL, min_pss = NULL, max_pss = NULL, ch = NULL, print_to_file = FALSE) {
 
   suppressWarnings(library(ggplot2))
+  suppressWarnings(library(dplyr))
   
   # Subset the description of data to be plotted
   if (description == "U") {
@@ -61,7 +62,8 @@ plot_pss_hour <- function(dataset, description, first_day = NULL, last_day  = NU
   dataset3$count <- 1
   dataset3$hour_24 <- substring(dataset3$hour, first = 12, last = 13)
 
-  hour_counts <- plyr::ddply(dataset3, c("channel", "hour_24"), summarize, hour_count = sum(count))
+  hour_counts <- plyr::ddply(dataset3, c("hour_24"), summarize, hour_count = sum(count))
+  hour_counts_ch <- plyr::ddply(dataset3, c("channel", "hour_24"), summarize, hour_count = sum(count))
 
   m <- matrix(c(0,0,0,0,
                 0,1,2,0,
@@ -118,9 +120,9 @@ plot_pss_hour <- function(dataset, description, first_day = NULL, last_day  = NU
   }
 
   # Create a panel plot with just the top part of the above graph
-  hour_counts$channel_lab <- suppressMessages(plyr::revalue(as.factor(hour_counts$channel), c("1" = "Channel 1", "2" ="Channel 2", "3" = "Channel 3", "4" = "Channel 4")))
+  hour_counts_ch$channel_lab <- suppressMessages(plyr::revalue(as.factor(hour_counts_ch$channel), c("1" = "Channel 1", "2" ="Channel 2", "3" = "Channel 3", "4" = "Channel 4")))
 
-  all_channel_plot <- ggplot(hour_counts, aes(x = as.numeric(hour_24), y = hour_count, group = 1)) +
+  all_channel_plot <- ggplot(hour_counts_ch, aes(x = as.numeric(hour_24), y = hour_count, group = 1)) +
     geom_point() +
     geom_line() +
     facet_wrap(~channel_lab) +

@@ -2,24 +2,31 @@
 % Please edit documentation in R/bind_signal_data.R
 \name{bind_signal_data}
 \alias{bind_signal_data}
-\title{A function that combines individual Logie graphics data files.}
+\title{A function that combines and processes raw Logie graphics data files.}
 \usage{
-bind_signal_data(path_to_folder, site, year, max_pss, rows_rm = FALSE)
+bind_signal_data(path_to_folder, site, year, max_pss,
+  print_removed = FALSE)
 }
 \arguments{
-\item{path_to_folder}{The file path for the folder that contains all data files for processing.}
+\item{path_to_folder}{The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.}
 
-\item{site}{Name of the study river.}
+\item{site}{Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).}
 
-\item{year}{Year of counter operation.}
+\item{year}{Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).}
 
-\item{max_pss}{The maximum pss size.}
+\item{max_pss}{The maximum peak signal size (pss).}
 
-\item{rows_rm}{Determines whether the rows removed from the data are returned as a .csv file in the working directory. Defaults to FALSE.}
+\item{print_removed}{Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are 
+printed to the path_to_folder as a .csv file.}
 }
 \value{
-A master data file of processed Logie signal data. The data are written to file as well as stored in the environment. All individual signal data files are combined into one master graphics file and written to the folder path as "all_signal_data.csv".
+A list containing two elements: signal_data (cleaned master data file), and 
+wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written 
+to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. 
+An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in 
+the data files into one master graphics file.
 }
 \description{
-A function to combine and process Logie graphics data.
+A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors 
+and duplicates are removed.
 }

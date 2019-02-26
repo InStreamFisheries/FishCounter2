@@ -1,24 +1,24 @@
-#' A function that combines individual Logie counter data files.
+#' A function that combines and processes raw Logie counter data files.
 #'
-#' A function to combine and process Logie counter data.
-#' @param path_to_folder The file path for the folder that contains all data files for processing.
-#' @param no_channels The number of counter channels that were operated.
-#' @param site Name of the study river.
-#' @param year Year of counter operation.
-#' @param max_pss The maximum pss size.
-#' @param rows_rm Determines whether or not the rows removed from the data are returned Defaults to FALSE.
-#' @return A master data file of processed Logie counter data. The data are written to file as well as stored in the environment.
+#' A function to combine and process raw Logie counter data. Raw Logie counter files are combined and errors and duplicates are 
+#' removed.
+#' @param path_to_folder The file path to the folder that contains raw Logie counter data files (.txt) to be processed.
+#' @param no_channels The number of counter channels that were operated. Data with channel numbers greater than no_channels 
+#' are assumed to be false data and are removed from the final data frame.
+#' @param site Name of the study river. The site name appears as a column in the resulting data frames and in the file name 
+#' of output .csv files (i.e., siteyear.csv).  
+#' @param year Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).
+#' @param max_pss The maximum peak signal size (pss).
+#' @param print_removed Defaults to FALSE. If TRUE, error data that were removed from the final data frame are printed to the path_to_folder as .csv files.
+#' @return A list containing four elements: counter_data (cleaned master data file), 
+#' wrong_pss (data containing errors in pss that were removed from counter_data), wrong_channel 
+#' (data containing errors in channel that were removed from counter_data), and wrong_description 
+#' (data containing errors in description that were removed from counter data). Counter_data is written 
+#' to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss, wrong_channel, and wrong_description 
+#' .csv files are also created.
 
 
-bind_counter_data <- function(path_to_folder, no_channels, site, year, max_pss, rows_rm = FALSE) {
-
-  if(is.null(site)) {
-    site <- ""
-  }
-
-  if(is.null(year)) {
-    year <- ""
-  }
+bind_counter_data <- function(path_to_folder, no_channels, site, year, max_pss, print_removed = FALSE) {
 
   counter_paths <- dir(path_to_folder, full.names = TRUE)
   names(counter_paths) <- basename(counter_paths)
@@ -89,7 +89,7 @@ bind_counter_data <- function(path_to_folder, no_channels, site, year, max_pss, 
                          sep=""),
             row.names = FALSE)
 
-  if(rows_rm == "TRUE") {
+  if(print_removed == "TRUE") {
 
     write.csv(x = row_rm1,
               file = paste(path_to_folder,

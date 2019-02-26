@@ -1,15 +1,15 @@
-#' A function that plots the peak signal size (PSS) by date and time per hour of Logie counter data
+#' A function that plots daily peak signal size (pss) for Logie counter data
 #'
-#' This function plots the PSS by day and time for Logie counter data
-#' @param dataset The dataset used to create the plots.
-#' @param description The type of counter event to be plotted. Must be "U", "D", or "E".
-#' @param first_day The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset
-#' @param last_day The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.
-#' @param min_pss The lower threshold PSS value to be plotted. Defaults to 0.
-#' @param max_pss The upper threshold PSS value to be plotted. Defaults to 130.
-#' @param ch The channel to be plotted. Defaults to all channels.
-#' @param print_to_file If TRUE, plot is saved to the working directory (defaults to FALSE).
-#' @return Generates a plot of the peak signal size by day and time with the average peak signal size overlaid.
+#' This function plots a time series of average daily peak signal size (pss) and hourly pss for Logie counter data.
+#' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
+#' @param description The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.
+#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.
+#' @param min_pss The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.
+#' @param max_pss The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.
+#' @param ch The channel to be plotted. Defaults to all channels. Needs to be inputed as an object or vector (e.g. 1, or c(1, 2)).
+#' @param print_to_file If TRUE, the plot is saved to the working directory. Defaults to FALSE.
+#' @return Generates a plot of the average daily peak signal size (for the specified description) and hourly pss. 
 
 plot_pss_date <- function(dataset, description, first_day = NULL, last_day = NULL, min_pss = NULL, max_pss = NULL,
                           ch = NULL, print_to_file = FALSE) {

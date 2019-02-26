@@ -1,13 +1,13 @@
 #' A function that plots events per hour of Logie counter data
 #'
-#' This function plots the number of events per hour, channel, and day.
-#' @param dataset The dataset used to create the plots.
-#' @param first_day The first day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the first day in the dataset
-#' @param last_day The last day of the dataset you want to use. This parameter needs to be specified in year day format. Defaults to the last day in the dataset.
-#' @param min_pss The lower threshold PSS value to be plotted. Defaults to 0.
-#' @param max_pss The upper threshold PSS value to be plotted. Defaults to 130.
-#' @param print_to_file If TRUE, plot is saved to the working directory (defaults to FALSE).
-#' @return Generates a plot displaying the hourly count of ups and events for Logie counter data.
+#' This function plots a time series of hourly events and up counts separated by channel for Logie counter data.
+#' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.
+#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.
+#' @param min_pss The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.
+#' @param max_pss The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.
+#' @param print_to_file If TRUE, the plot is saved to the working directory. Defaults to FALSE.
+#' @return Generates a time series plot of hourly events and up counts separated by channel for Logie counter data.
 
 plot_events <- function(dataset, first_day = NULL, last_day = NULL, min_pss = NULL, max_pss = NULL, print_to_file = FALSE) {
 
