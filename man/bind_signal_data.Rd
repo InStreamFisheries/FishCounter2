@@ -4,8 +4,7 @@
 \alias{bind_signal_data}
 \title{A function that combines and processes raw Logie graphics data files.}
 \usage{
-bind_signal_data(path_to_folder, site, year, max_pss,
-  print_removed = FALSE)
+bind_signal_data(path_to_folder, site, year, max_pss, print_removed = FALSE)
 }
 \arguments{
 \item{path_to_folder}{The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.}
@@ -16,17 +15,11 @@ bind_signal_data(path_to_folder, site, year, max_pss,
 
 \item{max_pss}{The maximum peak signal size (pss).}
 
-\item{print_removed}{Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are 
-printed to the path_to_folder as a .csv file.}
+\item{print_removed}{Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are printed to the path_to_folder as a .csv file.}
 }
 \value{
-A list containing two elements: signal_data (cleaned master data file), and 
-wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written 
-to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. 
-An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in 
-the data files into one master graphics file.
+A list containing two elements: signal_data (cleaned master data file), and wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in the data files into one master graphics file.
 }
 \description{
-A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors 
-and duplicates are removed.
+A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors and duplicates are removed.
 }

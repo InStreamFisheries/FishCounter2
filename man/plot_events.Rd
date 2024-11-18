@@ -4,15 +4,21 @@
 \alias{plot_events}
 \title{A function that plots events per hour of Logie counter data}
 \usage{
-plot_events(dataset, first_day = NULL, last_day = NULL,
-  min_pss = NULL, max_pss = NULL, print_to_file = FALSE)
+plot_events(
+  dataset,
+  first_day = NULL,
+  last_day = NULL,
+  min_pss = NULL,
+  max_pss = NULL,
+  print_to_file = FALSE
+)
 }
 \arguments{
 \item{dataset}{The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).}
 
-\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.}
+\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the first day in the dataset.}
 
-\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.}
+\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the last day in the dataset.}
 
 \item{min_pss}{The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.}
 
@@ -21,7 +27,7 @@ plot_events(dataset, first_day = NULL, last_day = NULL,
 \item{print_to_file}{If TRUE, the plot is saved to the working directory. Defaults to FALSE.}
 }
 \value{
-Generates a time series plot of hourly events and up counts separated by channel for Logie counter data.
+Returns a list with time series plot and data frame of hourly events and up counts separated by channel for Logie counter data.
 }
 \description{
 This function plots a time series of hourly events and up counts separated by channel for Logie counter data.

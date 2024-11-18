@@ -4,19 +4,17 @@
 \alias{plot_abundance}
 \title{A function that plots daily up and down counts as well as cumulative counts of Logie counter data}
 \usage{
-plot_abundance(dataset, first_day, print_to_file = FALSE)
+plot_abundance(dataset, first_day = NULL, print_to_file = FALSE)
 }
 \arguments{
 \item{dataset}{The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).}
 
-\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day format. 
-Defaults to the first day in the dataset.}
+\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the first day in the dataset.}
 
 \item{print_to_file}{If TRUE, the plot is saved to the working directory. Defaults to FALSE.}
 }
 \value{
-Two plots are created, a time series of daily up, down, and cumulative total counts, 
-and a time series of up counts and cumulative up counts.
+Two plots are returned as a list: a time series of daily up, down, and cumulative total counts, and a time series of up counts and cumulative up counts. Both plots are also printed to the console.
 }
 \description{
 This funtion plots a time series of up and down counts and cumulative counts for Logie counter data.
