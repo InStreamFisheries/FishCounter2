@@ -2,16 +2,14 @@
 #'
 #' This funtion plots a time series of up and down counts and cumulative counts for Logie counter data.
 #' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
-#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format.
-#' Defaults to the first day in the dataset.
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the first day in the dataset.
 #' @param print_to_file If TRUE, the plot is saved to the working directory. Defaults to FALSE.
-#' @return Two plots are created, a time series of daily up, down, and cumulative total counts,
-#' and a time series of up counts and cumulative up counts.
+#' @return Two plots are returned as a list: a time series of daily up, down, and cumulative total counts, and a time series of up counts and cumulative up counts. Both plots are also printed to the console.
+#' @export
 
-plot_abundance <- function(dataset, first_day = NULL, print_to_file = FALSE) {
-
-  suppressWarnings(library(ggplot2))
-  suppressMessages(library(dplyr))
+plot_abundance <- function(dataset,
+                           first_day = NULL,
+                           print_to_file = FALSE) {
 
   dataset$jday <- lubridate::yday(lubridate::ymd(dataset$date))
 
@@ -19,113 +17,139 @@ plot_abundance <- function(dataset, first_day = NULL, print_to_file = FALSE) {
     first_day <- min(dataset$jday)
   }
 
-  dataset <- filter_(dataset, ~jday >= first_day)
-  dataset$jday <- NULL # I'm not sure why this is here
+  dataset <- dataset |>
+    dplyr::filter(jday >= first_day) |>
+    dplyr::mutate(date = as.POSIXct(lubridate::ymd(date)))
 
-  dataset$round.date <- as.POSIXct(round(lubridate::ymd_hms(dataset$date.time), "day")) # Round up to the nearest day. Why is this here?
 
-  updata <- data.frame(filter_(dataset, ~description == "U"), count = 1)
-  updata$cummulative_count <- cumsum(updata$count)
+  # Prepare up and down data, then merge ------------------------------------
 
-  up <- plyr::ddply(updata, ~round.date, summarize,
-              daily_count = sum(count),
-              count = max(cummulative_count))
+  updata <- dataset |>
+    dplyr::filter(description == "U") |>
+    dplyr::mutate(count = 1,
+                  cumulative_count = cumsum(count))
 
-  r <- as.POSIXct(range(up$round.date))
+  ups <- updata |>
+    dplyr::group_by(date) |>
+    dplyr::summarise(ups = sum(count))
 
-  ups1 <- ggplot(up, aes(x = round.date, y = daily_count)) +
-    geom_point() +
-    geom_line() +
-    ylab("Daily Up Count") + xlab("") +
-    theme_bw() +
-    #scale_x_datetime(limits = c(r[1], r[2]), date_breaks = "4 days", labels = scales::date_format("%b %d")) +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.ticks.x = element_blank(),
-          axis.text.x = element_blank())
+  downdata <- dataset |>
+    dplyr::filter(description == "D") |>
+    dplyr::mutate(count = 1,
+                  cumulative_count = cumsum(count))
 
-  ups2 <- ggplot(up, aes(x = round.date, y = count)) +
-    geom_point() +
-    geom_line() +
-    ylab("Cumulative Up Count") + xlab("") +
-    scale_x_datetime(limits = c(r[1], r[2]), date_breaks = "4 days", labels = scales::date_format("%b %d")) +
-    theme_bw() +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  downs <- downdata |>
+    dplyr::group_by(date) |>
+    dplyr::summarise(downs = sum(count))
 
-  grid::grid.newpage()
-  grid::grid.draw(rbind(ggplotGrob(ups1), ggplotGrob(ups2), size = "last"))
+  counts <- dplyr::full_join(ups, downs, by = "date") |>
+    tidyr::replace_na(list(ups = 0,
+                           downs = 0)) |>
+    dplyr::mutate(up_sub_down = ups - downs,
+                  daily_total = cumsum(up_sub_down))
+
+
+
+  # Plot up data only -------------------------------------------------------
+
+  up <- updata |>
+    dplyr::group_by(date) |>
+    dplyr::summarise(daily_count = sum(count),
+                     count = max(cumulative_count))
+
+  r <- as.POSIXct(range(up$date))
+
+  ups1 <- ggplot2::ggplot(up, ggplot2::aes(x = date, y = daily_count)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Daily Up Count") + ggplot2::xlab("") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_y_continuous(limits = function(x) range(pretty(x)),
+                                breaks = function(x) pretty(x)) +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank(),
+                   axis.ticks.x = ggplot2::element_blank(),
+                   axis.text.x = ggplot2::element_blank())
+
+  ups2 <- ggplot2::ggplot(up, ggplot2::aes(x = date, y = count)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Cumulative Up Count") + ggplot2::xlab("") +
+    # ggplot2::scale_y_continuous(limits = function(x) range(pretty(x)),
+    #                             breaks = function(x) pretty(x)) +
+    ggplot2::scale_x_datetime(limits = c(r[1], r[2]),
+                              date_breaks = "4 days",
+                              labels = scales::date_format("%b %d")) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank())
+
+  up_plot <- cowplot::plot_grid(plotlist = list(ups1, ups2),
+                                nrow = 2)
+
+
+
+
+  # Plot both ups and downs -------------------------------------------------
+
+  r.count <- as.POSIXct(range(counts$date))
+
+  counts.long <- tidyr::pivot_longer(counts,
+                                     cols = 2:5,
+                                     names_to = "category",
+                                     values_to = "count")
+
+  counts.long1 <- dplyr::filter(counts.long, category %in% c("ups", "downs"))
+  counts.long2 <- dplyr::filter(counts.long, category == "daily_total")
+
+  total1 <- ggplot2::ggplot(counts.long1, ggplot2::aes(x = date, y = count, color = category)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Daily Count") + ggplot2::xlab("") +
+    ggplot2::theme_bw() +
+    ggplot2::scale_y_continuous(limits = function(x) range(pretty(x)),
+                                breaks = function(x) pretty(x)) +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank(),
+                   axis.ticks.x = ggplot2::element_blank(),
+                   axis.text.x = ggplot2::element_blank(),
+                   legend.title = ggplot2::element_blank(),
+                   legend.position = c(1, 1),
+                   legend.justification = c("right", "top"),
+                   legend.background = ggplot2::element_rect(colour = NA, fill = "transparent")) +
+    ggplot2::scale_color_manual(values = c("black", "grey"),
+                                breaks = c("ups", "downs"),
+                                labels = c("Up Counts", "Down Counts"))
+
+  total2 <- ggplot2::ggplot(counts.long2, ggplot2::aes(x = date, y = count)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_line() +
+    ggplot2::ylab("Cumulative Daily Count") + ggplot2::xlab("") +
+    ggplot2::scale_y_continuous(limits = function(x) range(pretty(x)),
+                                breaks = function(x) pretty(x)) +
+    ggplot2::scale_x_datetime(limits = c(r.count[1], r.count[2]),
+                              date_breaks = "4 days",
+                              labels = scales::date_format("%b %d")) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor = ggplot2::element_blank())
+
+  total_plot <- cowplot::plot_grid(plotlist = list(total1, total2),
+                                   nrow = 2)
+
+
+  # Outputs -----------------------------------------------------------------
 
   if (print_to_file == TRUE) {
-    png("plot_abundance_up.png", width = 7, height = 6, units = "in", res = 1000)
-    grid::grid.newpage()
-    grid::grid.draw(rbind(ggplotGrob(ups1), ggplotGrob(ups2), size = "last"))
-    dev.off()
+
+    cowplot::save_plot("plot_abundance_up.png", up_plot, base_height = 6, base_width = 7)
+    cowplot::save_plot("plot_abundance_total.png", total_plot, base_height = 6, base_width = 7)
+
   }
 
-  ###################################
-  # Plot with Both UP and DOWN data #
-  ###################################
 
-  downdata <- data.frame(filter_(dataset, ~description == "D"), count = 1)
+  return(list(ups = up_plot,
+              totals = total_plot))
 
-  ups <- plyr::ddply(updata, ~round.date, summarize,
-                     daily_count = sum(count))
-  colnames(ups) <- c("round.date", "ups")
 
-  downs <- plyr::ddply(downdata, ~round.date, summarize,
-                       daily_count = sum(count))
-  colnames(downs) <- c("round.date", "downs")
-
-  counts <- merge(ups, downs, by = "round.date", all = TRUE)
-
-  counts[is.na(counts)] <- 0 # Turn na counts into 0
-
-  counts <- counts %>%
-    mutate(up_sub_down = ups - downs) %>%
-    mutate(daily_total = cumsum(up_sub_down))
-
-  # Find max up or down count for upper ylim
-  upperY <- max(rbind(counts$ups, counts$downs))
-
-  r.count <- as.POSIXct(range(counts$round.date))
-
-  counts.long <- tidyr::gather(counts, category, count, ups:daily_total)
-  counts.long1 <- subset(counts.long, category %in% c("ups","downs"))
-  counts.long2 <- subset(counts.long, category == "daily_total")
-
-  total1 <- ggplot(counts.long1, aes(x = round.date, y = count, color = category)) +
-    geom_point() +
-    geom_line() +
-    ylab("Daily Count") + xlab("") +
-    theme_bw() +
-    scale_y_continuous(limits = c(0, upperY)) +
-    theme(panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          axis.ticks.x = element_blank(),
-          axis.text.x = element_blank(),
-          legend.title = element_blank(),
-          legend.position = c(1,1),
-          legend.justification = c(1, 1),
-          legend.background = element_rect(colour = NA, fill = "transparent")) +
-    scale_color_manual(values = c("grey", "black"),
-                      breaks = c("ups", "downs"),
-                      labels = c("Up Counts", "Down Counts"))
-
-  total2 <- ggplot(counts.long2, aes(x = round.date, y = count)) +
-    geom_point() +
-    geom_line() +
-    ylab("Cumulative Daily Count") + xlab("") +
-    scale_x_datetime(limits = c(r.count[1], r.count[2]), date_breaks = "4 days", labels = scales::date_format("%b %d")) +
-    theme_bw() +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-
-  grid::grid.newpage()
-  grid::grid.draw(rbind(ggplotGrob(total1), ggplotGrob(total2), size = "last"))
-
-  if (print_to_file == TRUE) {
-    png("plot_abundance_total.png", width = 7, height = 6, units = "in", res = 1000)
-    grid::grid.newpage()
-    grid::grid.draw(rbind(ggplotGrob(total1), ggplotGrob(total2), size = "last"))
-    dev.off()
-  }
 }

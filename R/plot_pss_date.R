@@ -3,16 +3,23 @@
 #' This function plots a time series of average daily peak signal size (pss) and hourly pss for Logie counter data.
 #' @param dataset The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).
 #' @param description The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).
-#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.
-#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.
+#' @param first_day The first day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the first day in the dataset.
+#' @param last_day The last day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the last day in the dataset.
 #' @param min_pss The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.
 #' @param max_pss The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.
-#' @param ch The channel to be plotted. Defaults to all channels. Needs to be inputed as an object or vector (e.g. 1, or c(1, 2)).
+#' @param ch The channel to be plotted. Defaults to all channels. Needs to be specified as an object or vector (e.g. 1, or c(1, 2)).
 #' @param print_to_file If TRUE, the plot is saved to the working directory. Defaults to FALSE.
-#' @return Generates a plot of the average daily peak signal size (for the specified description) and hourly pss. 
+#' @return Returns a plot of the average daily peak signal size (for the specified description) and hourly pss.
+#' @export
 
-plot_pss_date <- function(dataset, description, first_day = NULL, last_day = NULL, min_pss = NULL, max_pss = NULL,
-                          ch = NULL, print_to_file = FALSE) {
+plot_pss_date <- function(dataset,
+                          description,
+                          first_day = NULL,
+                          last_day = NULL,
+                          min_pss = NULL,
+                          max_pss = NULL,
+                          ch = NULL,
+                          print_to_file = FALSE) {
 
   # Subset the description of data to be plotted
   if (description == "U") {
@@ -45,55 +52,54 @@ plot_pss_date <- function(dataset, description, first_day = NULL, last_day = NUL
     ch <- seq(min(dataset$channel, na.rm = TRUE), max(dataset$channel, na.rm = TRUE), 1)
   }
 
+
+  # Prepare data for plotting -----------------------------------------------
+
+
+  dataset1 <- dataset |>
+    dplyr::filter(channel %in% ch) |>
+    dplyr::filter(jday >= first_day, jday <= last_day) |>
+    dplyr::mutate(date.time = lubridate::ymd_hms(date.time),
+                  date.time = as.POSIXct(round(date.time, "hours"))) |>
+    dplyr::filter(!is.na(pss))
+
+  # Determine the daily mean pss
+  mean_pss <- dataset1 |>
+    dplyr::group_by(date) |>
+    dplyr::summarize(mean_pss = mean(pss)) |>
+    # dplyr::mutate(date_alt = as.POSIXct(strptime(date, "%Y-%m-%d"))) |> # Reformat date
+    dplyr::mutate(date_alt = as.POSIXct(lubridate::ymd(date))) |>
+    dplyr::filter(!is.na(mean_pss))
+
+  r <- as.POSIXct(range(mean_pss$date_alt))
+
   # Create a ch label for the file name
   ch_name <- paste(ch, collapse = "")
 
-  dataset <- subset(dataset, channel %in% ch)
-  dataset <- dplyr::filter_(dataset, ~jday >= first_day, ~jday <= last_day)
-  dataset$date.time <- lubridate::ymd_hms(dataset$date.time)
-  dataset$date.time <- as.POSIXct(round(dataset$date.time, "hours")) # Round to the nearest hour.
 
-  # Determine the daily mean pss
-  mean_pss <- plyr::ddply(dataset, c("date"),
-                             summarize, mean_pss = mean(pss))
-  mean_pss$date_alt <- as.POSIXct(strptime(mean_pss$date, "%Y-%m-%d"))
-  r <- as.POSIXct(range(mean_pss$date_alt))
+  # Generate plot -----------------------------------------------------------
 
-  # Plot
-  if (print_to_file == TRUE) {
-    png(sprintf("plot_pss_date_%s_channels%s.png", description, ch_name), height = 6, width = 7, units = "in", res = 1000)
-  }
+  pss_date <- ggplot2::ggplot(dataset1, ggplot2::aes(x = date.time, y = pss)) +
+    ggplot2::geom_point(color = "#00000010", size = 1.5) +
+    ggplot2::geom_point(data = mean_pss, ggplot2::aes(x = date_alt, y = mean_pss), color = "red", size = 1.5) +
+    ggplot2::ylab(sprintf("PSS (%s)", description)) +
+    ggplot2::xlab("") +
+    ggplot2::scale_y_continuous(limits = c(min_pss, max_pss),
+                                breaks = seq(0, 200, 20),
+                                labels = seq(0, 200, 20)) +
+    ggplot2::scale_x_datetime(breaks = scales::date_breaks("1 week"),
+                              labels = scales::date_format("%b %d")) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.grid = ggplot2::element_blank()
+    )
 
-  par(mfrow = c(1, 1),
-      mar = c(2, 2, 2, 2),
-      oma = c(2, 2, 2, 2))
 
-  plot(pss ~ date.time, data = dataset,
-       col = "#00000010",
-       pch = 19,
-       cex = 1.5,
-       axes = FALSE,
-       las = 1,
-       xlab = "",
-       ylab = "",
-       ylim = c(min_pss, max_pss))
 
-  par(new=TRUE)
+  # Outputs -----------------------------------------------------------------
 
-  plot(mean_pss ~ date_alt, data = mean_pss, typ = "p", col = "red", pch = 19,
-       cex = 1.5, axes = FALSE, las = 1, xlab = "", ylab = "",
-       ylim = c(min_pss, max_pss))
+  ggplot2::ggsave(sprintf("plot_pss_date_%s_channels%s.png", description, ch_name), pss_date, height = 4, width = 5, units = "in")
 
-  axis.POSIXct(1, at = seq(r[1], r[2], by = "2 days"), format = "%b %d", cex.axis = 0.85,
-               col = "grey60")
+  return(pss_date)
 
-  axis(2, las = 1, col = "grey60")
-
-  box(col = "grey60")
-
-  mtext(sprintf("PSS (%s)", description), side = 2, line = 2.5, outer = FALSE, cex = 1.5)
-
-  if(print_to_file == TRUE) {
-    dev.off()
-  }
 }

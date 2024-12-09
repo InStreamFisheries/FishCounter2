@@ -4,28 +4,36 @@
 \alias{plot_pss_date}
 \title{A function that plots daily peak signal size (pss) for Logie counter data}
 \usage{
-plot_pss_date(dataset, description, first_day = NULL, last_day = NULL,
-  min_pss = NULL, max_pss = NULL, ch = NULL, print_to_file = FALSE)
+plot_pss_date(
+  dataset,
+  description,
+  first_day = NULL,
+  last_day = NULL,
+  min_pss = NULL,
+  max_pss = NULL,
+  ch = NULL,
+  print_to_file = FALSE
+)
 }
 \arguments{
 \item{dataset}{The cleaned counter dataset used to populate histograms (i.e., counter_data as created by bind_counter_data()).}
 
 \item{description}{The type of counter data to be plotted. Must be "U" (ups), "D" (downs), or "E" (events).}
 
-\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day format. Defaults to the first day in the dataset.}
+\item{first_day}{The first day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the first day in the dataset.}
 
-\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day format. Defaults to the last day in the dataset.}
+\item{last_day}{The last day of the dataset to be plotted, which must be specified in year-day (yday) format. Defaults to the last day in the dataset.}
 
 \item{min_pss}{The lower threshold peak signal size (pss) value to be plotted. Defaults to 0.}
 
 \item{max_pss}{The upper threshold peak signal size (pss) value to be plotted. Defaults to 130.}
 
-\item{ch}{The channel to be plotted. Defaults to all channels. Needs to be inputed as an object or vector (e.g. 1, or c(1, 2)).}
+\item{ch}{The channel to be plotted. Defaults to all channels. Needs to be specified as an object or vector (e.g. 1, or c(1, 2)).}
 
 \item{print_to_file}{If TRUE, the plot is saved to the working directory. Defaults to FALSE.}
 }
 \value{
-Generates a plot of the average daily peak signal size (for the specified description) and hourly pss.
+Returns a plot of the average daily peak signal size (for the specified description) and hourly pss.
 }
 \description{
 This function plots a time series of average daily peak signal size (pss) and hourly pss for Logie counter data.

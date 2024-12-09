@@ -1,7 +1,7 @@
 Package: FishCounter2
 Type: Package
 Title: Summarizes and explored fish counter data
-Version: 2.0.0
+Version: 3.0.0
 Authors@R: c(
     person("Doug", "Braun", role = c("aut")),
     person("Annika", "Putt", email = "annik@instream.net", role = c("cre", "ctb")))
@@ -17,6 +17,6 @@ Imports:
     lubridate,
     ggplot2,
     scales,
-    grid,
+    cowplot,
     tidyr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.3.2
