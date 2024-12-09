@@ -1,19 +1,19 @@
+# test!
 #' A function that combines and processes raw Logie graphics data files.
 #'
-#' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors 
+#' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors
 #' and duplicates are removed.
 #' @param path_to_folder The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.
 #' @param site Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).
 #' @param year Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).
 #' @param max_pss The maximum peak signal size (pss).
-#' @param print_removed Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are 
+#' @param print_removed Defaults to FALSE. If TRUE, pss error data that were removed from the final data frame are
 #' printed to the path_to_folder as a .csv file.
-#' @return A list containing two elements: signal_data (cleaned master data file), and 
-#' wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written 
-#' to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. 
-#' An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in 
+#' @return A list containing two elements: signal_data (cleaned master data file), and
+#' wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written
+#' to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file.
+#' An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in
 #' the data files into one master graphics file.
-
 
 bind_signal_data <- function(path_to_folder, site, year, max_pss, print_removed = FALSE) {
 
