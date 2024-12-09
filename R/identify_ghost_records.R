@@ -21,5 +21,3 @@ ghosts <- function(data){
   return(out)
 
 }
-
-#t3est
