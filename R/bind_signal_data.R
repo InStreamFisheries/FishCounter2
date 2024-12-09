@@ -1,4 +1,3 @@
-# test!
 #' A function that combines and processes raw Logie graphics data files.
 #'
 #' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors
