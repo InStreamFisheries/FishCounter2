@@ -2,18 +2,19 @@
 % Please edit documentation in R/identify_ghost_records.R
 \name{ghosts}
 \alias{ghosts}
-\title{This function detects possible ghost traces in graphics validated excel sheets
-it identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
-A date.time column must be present in the excel file
-The graphics validation column must be named graphics_validation
-The excel file must have a "channel" and "pss" column}
+\title{A function used to identify possible ghost traces in resistivity counter data
+It identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
+The description column is used for comparison
+The data must contain a "description", "channel", "pss", "date", and "time" column}
 \usage{
 ghosts(data)
 }
+\value{
+the data with a "ghost" column identifying possible ghost traces produced by the counter
+}
 \description{
-This function detects possible ghost traces in graphics validated excel sheets
-it identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
-A date.time column must be present in the excel file
-The graphics validation column must be named graphics_validation
-The excel file must have a "channel" and "pss" column
+A function used to identify possible ghost traces in resistivity counter data
+It identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
+The description column is used for comparison
+The data must contain a "description", "channel", "pss", "date", and "time" column
 }
