@@ -2,10 +2,7 @@
 % Please edit documentation in R/identify_ghost_records.R
 \name{ghosts}
 \alias{ghosts}
-\title{A function used to identify possible ghost traces in resistivity counter data
-It identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
-The description column is used for comparison
-The data must contain a "description", "channel", "pss", "date", and "time" column}
+\title{A function used to identify possible ghost traces in resistivity counter data}
 \usage{
 ghosts(data)
 }
@@ -13,7 +10,6 @@ ghosts(data)
 the data with a "ghost" column identifying possible ghost traces produced by the counter
 }
 \description{
-A function used to identify possible ghost traces in resistivity counter data
 It identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
 The description column is used for comparison
 The data must contain a "description", "channel", "pss", "date", and "time" column

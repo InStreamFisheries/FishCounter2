@@ -1,4 +1,5 @@
 #' A function used to identify possible ghost traces in resistivity counter data
+#'
 #' It identifies traces with the same direction within 2 seconds of the previous trace if it has an equal or smaller pss on a different channel
 #' The description column is used for comparison
 #' The data must contain a "description", "channel", "pss", "date", and "time" column
