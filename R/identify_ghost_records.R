@@ -16,7 +16,7 @@ ghosts <- function(data){
            ghost = case_when(is.na(time_diff) ~ NA_character_,
                              abs(time_diff) <= 2 & channel != lag(channel) & pss <= lag(pss) ~ "possible ghost",
                              TRUE ~ "")) %>%
-    select(-time_diff, -date.time) %>%
+    select(-time_diff) %>%
     ungroup()
 
   return(out)
