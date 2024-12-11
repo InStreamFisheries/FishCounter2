@@ -2,6 +2,7 @@
 #'
 #' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors and duplicates are removed.
 #' @param path_to_folder The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.
+#' @param output_folder The file path to the folder for output files. Defaults to path_to_folder if unassigned.
 #' @param site Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).
 #' @param year Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).
 #' @param max_pss The maximum peak signal size (pss).
@@ -9,12 +10,16 @@
 #' @return A list containing two elements: signal_data (cleaned master data file), and wrong_pss (data containing errors in pss that were removed from signal_data). Signal_data is written to the path_to_folder location as a .csv file. If print_removed is TRUE, wrong_pss is also returned as a .csv file. An additional file, all_signal_data.csv, is written to path_to_folder, which combines all raw graphics data contained in the data files into one master graphics file.
 #' @export
 
-
 bind_signal_data <- function(path_to_folder,
+                             output_folder = NULL,
                              site,
                              year,
                              max_pss,
                              print_removed = FALSE) {
+
+  output_folder <- if(is.null(output_folder)){
+    path_to_folder
+  }
 
   #"\\.txt$" tells r that the files are text files.
   signal_paths <- dir(path_to_folder, pattern = "\\.txt$", full.names = TRUE)
@@ -27,7 +32,6 @@ bind_signal_data <- function(path_to_folder,
                               sep = "",
                               fill = TRUE,
                               stringsAsFactors = FALSE)
-
 
   signal_data2 <- subset(signal_data1[, c(1:8)], V1 == "S")[, -2]
 
@@ -61,51 +65,26 @@ bind_signal_data <- function(path_to_folder,
   signal_data <- signal_data[order(signal_data$date.time), ]
 
   write.csv(x = signal_data[, -2],
-            file = paste(path_to_folder,
+            file = paste0(output_folder,"/",
                          site,
                          year,
-                         ".csv",
-                         sep = ""),
+                         ".csv"),
             row.names = FALSE)
 
   if(print_removed == "TRUE") {
 
     write.csv(x = row_rm5[, -2],
-              file = paste(path_to_folder,
+              file = paste0(output_folder,"/",
                            site,
                            year,
                            "wrongPSS",
-                           ".csv",
-                           sep = ""),
+                           ".csv"),
               row.names = FALSE)
   }
 
   final_list <- list(signal_data = signal_data,
                      wrong_pss = row_rm5)
-  return(final_list)
 
-  # Add a function that binds all of the signal data together and creates a master text file
-
-  data.list <- list()
-
-  for(i in 1:length(signal_paths)) {
-    temp <- read.table(file = signal_paths[i], header = FALSE, sep = "", fill = TRUE)
-    data <- subset(temp[,c(1:7)], V1 == "S" | V1 == "D"| V1 == "F")
-    colnames(data) <- c("code", "date", "time", "X", "channel", "description", "signal")
-    data.list[[i]] <- data
-  }
-
-  data.all <- do.call("rbind", data.list)
-
-  data.all.2 <- ifelse(data.all$code == "S",
-                       as.character(paste(data.all$code, data.all$date, data.all$time, data.all$X, data.all$channel, data.all$description, data.all$signal, sep = " ")),
-                       as.character(paste(data.all$code, data.all$date, sep = " ")))
-
-  write.table(x = data.all.2,
-              file = sprintf("%s/all_signal_data.txt", path_to_folder),
-              row.names = FALSE,
-              col.names = FALSE,
-              quote = FALSE,
-              sep = "\t")
+  return(final_list$signal_data)
 
 }
