@@ -4,10 +4,19 @@
 \alias{bind_signal_data}
 \title{A function that combines and processes raw Logie graphics data files.}
 \usage{
-bind_signal_data(path_to_folder, site, year, max_pss, print_removed = FALSE)
+bind_signal_data(
+  path_to_folder,
+  output_folder = NULL,
+  site,
+  year,
+  max_pss,
+  print_removed = FALSE
+)
 }
 \arguments{
 \item{path_to_folder}{The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.}
+
+\item{output_folder}{The file path to the folder for output files. Defaults to path_to_folder if unspecified.}
 
 \item{site}{Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).}
 

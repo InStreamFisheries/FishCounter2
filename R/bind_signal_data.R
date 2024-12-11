@@ -2,7 +2,7 @@
 #'
 #' A function to combine and process raw Logie graphics data. Raw Logie data files are combined and errors and duplicates are removed.
 #' @param path_to_folder The file path to the folder that contains raw Logie graphics data files (.txt) to be processed.
-#' @param output_folder The file path to the folder for output files. Defaults to path_to_folder if unassigned.
+#' @param output_folder The file path to the folder for output files. Defaults to path_to_folder if unspecified.
 #' @param site Name of the study river. The site is used to name output .csv files (i.e., siteyear.csv).
 #' @param year Year of counter operation. The year is used to name output .csv files (i.e., siteyear.csv).
 #' @param max_pss The maximum peak signal size (pss).
