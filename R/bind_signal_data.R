@@ -85,6 +85,6 @@ bind_signal_data <- function(path_to_folder,
   final_list <- list(signal_data = signal_data,
                      wrong_pss = row_rm5)
 
-  return(final_list$signal_data)
+  return(final_list)
 
 }
